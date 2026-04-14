@@ -14,7 +14,7 @@ Uses also patched versions of the `GLTFExporter.js` from Three.js and `phoenixEx
 
 After git clone run:
 ```
-npm ci
+npm install
 ```
 
 ## Usage
