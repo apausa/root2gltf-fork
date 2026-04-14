@@ -16,5 +16,13 @@
     "jsroot": "^7.1.0",
     "three": "^0.141.0",
     "yargs": "^17.5.1"
+  },
+  "devDependencies": {
+    "@eslint/css": "^1.1.0",
+    "@eslint/js": "^10.0.1",
+    "@eslint/json": "^1.2.0",
+    "@eslint/markdown": "^8.0.1",
+    "eslint": "^10.2.0",
+    "globals": "^17.5.0"
   }
 }
