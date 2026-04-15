@@ -44,4 +44,6 @@ export default defineConfig([
   ...jsConfig,
   // Node config
   ...nodeConfig,
+  // Disable restricted syntax globally
+  { rules: { 'no-restricted-syntax': 'off' } },
 ]);
