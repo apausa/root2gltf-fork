@@ -13,6 +13,7 @@
     "hello": "./bin/index.js"
   },
   "dependencies": {
+    "express": "^5.2.1",
     "jsroot": "^7.1.0",
     "three": "^0.141.0",
     "yargs": "^17.5.1"
