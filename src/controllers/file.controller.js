@@ -1,12 +1,33 @@
+import { convertGeometry } from '../phoenixExport';
+
 async function parseFile(req, res) {
   try {
-    console.log(req);
+    const {
+      file, body: {
+        maxLevel, subParts, childrenToHide, objectName,
+      },
+    } = req;
 
-    res.status(201);
-    return res.send({});
+    // Converts the subParts string paths to RegExp objects
+    for (const [, entry] of Object.entries(subParts)) {
+      const temp = [];
+      for (const subPath of entry[0]) {
+        temp.push(new RegExp(subPath));
+      }
+      entry[0] = temp;
+    }
+
+    const gltf = await convertGeometry(
+      file.path,
+      maxLevel,
+      subParts,
+      childrenToHide,
+      objectName,
+    );
+
+    return res.status(200).json(gltf);
   } catch (error) {
-    res.status(500);
-    return res.send(error);
+    return res.res.status(500).send(error);
   }
 }
 
