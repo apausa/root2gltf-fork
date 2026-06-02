@@ -136,6 +136,7 @@ root2gltf/
 ## Performance improvements
 
 Memory
+
 - Export one scene at a time so each graph is freed instead of accumulating in memory
 - Keep a reference to the first occurrence of each object instead of JSON-parsing during deduplication
-- 
+- Deload Node.js call stack by turning recursive functions into iterative (using the heap instead)

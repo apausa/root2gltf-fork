@@ -13,27 +13,38 @@ export const removeTrees = (
   node: TGeoNodeMatrix,
   hiddenPaths: Set<string>,
   maxLevel: number,
-  level = 0,
 ): void => {
-  if (!node.fVolume.fNodes) return;
+  const stack: { node: TGeoNodeMatrix; level: number }[] = [{ node, level: 0 }];
 
-  const nodes = node.fVolume.fNodes.arr;
-  let j = 0;
+  while (stack.length) {
+    const { node: current, level } = stack.pop()!;
 
-  nodes.forEach((n) => {
-    if (level < maxLevel && !hiddenPaths.has(n.fName)) nodes[j++] = n;
-  });
+    if (current.fVolume.fNodes) {
+      const nodes = current.fVolume.fNodes.arr;
+      let j = 0;
 
-  nodes.length = j;
+      nodes.forEach((n) => {
+        if (level < maxLevel && !hiddenPaths.has(n.fName)) nodes[j++] = n;
+      });
 
-  nodes.forEach((n) => removeTrees(n, hiddenPaths, maxLevel, level + 1));
+      nodes.length = j;
+
+      nodes.forEach((n) => stack.push({ node: n, level: level + 1 }));
+    }
+  }
 };
 
 // Makes given node and all its children invisible
 export const hideTree = (node: TGeoNodeMatrix): void => {
-  node.fVolume.fGeoAtt &= ~K_VIS_THIS;
+  const stack: TGeoNodeMatrix[] = [node];
 
-  if (node.fVolume.fNodes) node.fVolume.fNodes.arr.forEach(hideTree);
+  while (stack.length) {
+    const current = stack.pop()!;
+
+    current.fVolume.fGeoAtt &= ~K_VIS_THIS;
+
+    if (current.fVolume.fNodes) stack.push(...current.fVolume.fNodes.arr);
+  }
 };
 
 // Avoid megabytes for near-flat shapes like Rich mirrors
@@ -51,16 +62,30 @@ const reshapeSphere = (shape: any): void => {
 
 // Makes given node visible
 export const showNode = (node: TGeoNodeMatrix): void => {
-  node.fVolume.fGeoAtt |= K_VIS_THIS;
+  const stack: TGeoNodeMatrix[] = [node];
 
-  reshapeSphere(node.fVolume.fShape);
+  while (stack.length) {
+    const current = stack.pop()!;
+
+    current.fVolume.fGeoAtt |= K_VIS_THIS;
+
+    reshapeSphere(current.fVolume.fShape);
+
+    if (current.fVolume.fNodes) stack.push(...current.fVolume.fNodes.arr);
+  }
 };
 
 // Makes given node and all its children visible
 const showTree = (node: TGeoNodeMatrix): void => {
-  if (node.fVolume.fFillStyle !== 0) showNode(node);
+  const stack: TGeoNodeMatrix[] = [node];
 
-  if (node.fVolume.fNodes) node.fVolume.fNodes.arr.forEach(showTree);
+  while (stack.length) {
+    const current = stack.pop()!;
+
+    if (current.fVolume.fFillStyle !== 0) showNode(current);
+
+    if (current.fVolume.fNodes) stack.push(...current.fVolume.fNodes.arr);
+  }
 };
 
 // Find and show all volume subparts within the target paths
