@@ -49,6 +49,9 @@ const root2gltf = async ({
     // Define variables
     const { hidden, depth, subparts } = generateConfig(config, childrenNodes);
     const exporter = new GLTFExporter();
+    const [max, min] = [0.6, 0.1]; // Opacity limits
+    const length = Object.keys(subparts).length - 1;
+    let i = 0; // Current value to map
     let gltfGeo: TGLTFGeometry | null = null;
 
     // Filter out all nodes within hidden paths and beyond a maximum level
@@ -66,7 +69,7 @@ const root2gltf = async ({
       rootScene.name = key;
       rootScene.children.push(build(rootGeo, BUILD_OPTIONS)); // Build from reassigned parameters
       rootScene.userData.visible = true;
-      rootScene.userData.opacity = 0.5; // 50% transparency
+      rootScene.userData.opacity = ((length - i) * (max - min)) / length + min; // Dynamic transparency
       normalizePivot(rootScene); // Normalize pivot to null before exporting for Three.js GLTFExporter
 
       console.log(
@@ -80,6 +83,8 @@ const root2gltf = async ({
 
       if (!gltfGeo) gltfGeo = gltfScene;
       else mergeGLTF(gltfGeo, gltfScene);
+
+      i++;
     }
 
     // Reduce the output file size by removing redundant data that jsroot generates
