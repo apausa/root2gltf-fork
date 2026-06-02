@@ -62,17 +62,9 @@ const reshapeSphere = (shape: any): void => {
 
 // Makes given node visible
 export const showNode = (node: TGeoNodeMatrix): void => {
-  const stack: TGeoNodeMatrix[] = [node];
+  node.fVolume.fGeoAtt |= K_VIS_THIS;
 
-  while (stack.length) {
-    const current = stack.pop()!;
-
-    current.fVolume.fGeoAtt |= K_VIS_THIS;
-
-    reshapeSphere(current.fVolume.fShape);
-
-    if (current.fVolume.fNodes) stack.push(...current.fVolume.fNodes.arr);
-  }
+  reshapeSphere(node.fVolume.fShape);
 };
 
 // Makes given node and all its children visible
