@@ -18,3 +18,24 @@ export const BUILD_OPTIONS = {
   numfaces: 10000000, // cap on the total number of triangle faces across the whole scene
   numnodes: 500000, // cap on the total number of visible nodes across the whole scene
 };
+
+// Color palette applied per subpart, cycled by index if there are more subparts than colors
+export const COLOR_PALETTE = [
+  "#fb2c36",
+  "#ff6900",
+  "#fe9a00",
+  "#f0b100",
+  "#7ccf00",
+  "#00c950",
+  "#00bc7d",
+  "#00bba7",
+  "#00b8db",
+  "#00a6f4",
+  "#2b7fff",
+  "#615fff",
+  "#8e51ff",
+  "#ad46ff",
+  "#e12afb",
+  "#f6339a",
+  "#ff2056",
+];
