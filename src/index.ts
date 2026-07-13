@@ -49,7 +49,7 @@ const root2gltf = async ({
     // Define variables
     const { hidden, depth, subparts } = generateConfig(config, childrenNodes);
     const exporter = new GLTFExporter();
-    const [max, min] = [0.6, 0.1]; // Opacity limits
+    const [max, min] = [0.8, 0.2]; // Opacity limits
     const length = Object.keys(subparts).length - 1;
     let i = 0; // Current value to map
     let gltfGeo: TGLTFGeometry | null = null;
