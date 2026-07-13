@@ -11,10 +11,10 @@ export const SPHERE_NSEG = 3;
 export const SPHERE_NZ = 3;
 
 // jsroot build parameters
-export const GEO_GRAD_PER_SEGM = 360 / 24;
+export const GEO_GRAD_PER_SEGM = 360 / 30;
 export const BUILD_OPTIONS = {
   dflt_colors: false, // avoids overriding predefined colors
-  vislevel: 10, // max depth of the geometry hierarchy to traverse and render
-  numfaces: 10000000, // cap on the total number of triangle faces across the whole scene
-  numnodes: 500000, // cap on the total number of visible nodes across the whole scene
+  vislevel: 99, // guardrail on the depth of the geometry hierarchy to traverse and render
+  numfaces: 1000000, // guardrail on the total number of triangle faces across the whole scene
+  numnodes: 10000, // guardrail on the total number of visible nodes across the whole scene
 };
