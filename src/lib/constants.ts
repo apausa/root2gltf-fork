@@ -2,9 +2,26 @@
 export const K_VIS_THIS = 0x80;
 export const K_VIS_DAUGHTER = 0x8;
 
-// Root type names
-export const TGEO_SPHERE = "TGeoSphere";
-export const TGEO_COMPOSITE_SHAPE = "TGeoCompositeShape";
+// jsroot types and properties
+export const T_GEO_SPHERE = "TGeoSphere";
+export const T_GEO_COMPOSITE_SHAPE = "TGeoCompositeShape";
+export const T_GEO_B_BOX_IDENTITY_FIELDS = new Set([
+  "fUniqueID",
+  "fBits",
+  "fName",
+  "fTitle",
+  "fShapeId",
+  "fShapeBits",
+]);
+export const MATRIX_TYPES = new Set([
+  "TGeoIdentity",
+  "TGeoTranslation",
+  "TGeoRotation",
+  "TGeoScale",
+  "TGeoCombiTrans",
+  "TGeoGenTrans",
+  "TGeoHMatrix",
+]);
 
 // Sphere segment counts
 export const SPHERE_NSEG = 3;

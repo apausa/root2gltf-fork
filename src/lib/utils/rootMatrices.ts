@@ -1,5 +1,3 @@
-import { IDENTITY } from "../constants.js";
-
 // Checks translation relative to the parent
 export const isNotTranslated = (translationMatrix?: ArrayLike<number>) =>
   !translationMatrix ||
@@ -10,7 +8,9 @@ export const isNotTranslated = (translationMatrix?: ArrayLike<number>) =>
 export const isNotRotated = (rotationMatrix?: ArrayLike<number>) =>
   !rotationMatrix ||
   // Compute difference between rotation matrix and identity matrix
-  IDENTITY.every((e, i) => Math.abs(Array.from(rotationMatrix)[i]! - e) < 1e-8);
+  [1, 0, 0, 0, 1, 0, 0, 0, 1].every(
+    (e, i) => Math.abs(Array.from(rotationMatrix)[i]! - e) < 1e-8,
+  );
 
 // Checks scale relative to the parent
 export const isNotScaled = (scalingMatrix?: ArrayLike<number>) =>
