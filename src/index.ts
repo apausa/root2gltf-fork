@@ -12,7 +12,7 @@ import {
 import mergeGLTF from "./concatenateOutput.js";
 
 // Constants
-import { BUILD_OPTIONS, GEO_GRAD_PER_SEGM } from "./lib/constants.js";
+import { GEO_GRAD_PER_SEGM } from "./lib/constants.js";
 
 // Types
 import type { TParams } from "./lib/types/converter.js";
