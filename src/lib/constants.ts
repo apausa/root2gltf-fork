@@ -29,9 +29,7 @@ export const SPHERE_NZ = 3;
 
 // jsroot build parameters
 export const GEO_GRAD_PER_SEGM = 360 / 30;
-export const BUILD_OPTIONS = {
-  dflt_colors: false, // avoids overriding predefined colors
-  vislevel: 99, // guardrail on the depth of the geometry hierarchy to traverse and render
-  numfaces: 1000000, // guardrail on the total number of triangle faces across the whole scene
-  numnodes: 10000, // guardrail on the total number of visible nodes across the whole scene
-};
+export const BUILD_OPTIONS = { dflt_colors: false }; // avoids overriding predefined colors
+
+// Minimum distance from the parent volume to be considered rudundant
+export const THRESHOLD = 1e-4;

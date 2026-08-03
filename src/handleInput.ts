@@ -7,6 +7,7 @@ import {
   T_GEO_B_BOX_IDENTITY_FIELDS,
   T_GEO_COMPOSITE_SHAPE,
   T_GEO_SPHERE,
+  THRESHOLD,
 } from "./lib/constants.js";
 import type { TGeoNodeMatrix, TGeoVolume } from "./lib/types/root.js";
 
@@ -75,21 +76,21 @@ const arePositionsEqual = (m: any): boolean => {
   const isNotTranslated = (translationMatrix?: ArrayLike<number>) =>
     !translationMatrix ||
     // Compute difference between translation matrix and 0s matrix
-    Array.from(translationMatrix).every((n) => Math.abs(n) < 1e-8);
+    Array.from(translationMatrix).every((n) => Math.abs(n) < THRESHOLD);
 
   // Checks rotation relative to the parent
   const isNotRotated = (rotationMatrix?: ArrayLike<number>) =>
     !rotationMatrix ||
     // Compute difference between rotation matrix and identity matrix
     [1, 0, 0, 0, 1, 0, 0, 0, 1].every(
-      (e, i) => Math.abs(Array.from(rotationMatrix)[i]! - e) < 1e-8,
+      (e, i) => Math.abs(Array.from(rotationMatrix)[i]! - e) < THRESHOLD,
     );
 
   // Checks scale relative to the parent
   const isNotScaled = (scalingMatrix?: ArrayLike<number>) =>
     !scalingMatrix ||
     // Compute difference between scaling matrix and 1s matrix
-    Array.from(scalingMatrix).every((n) => Math.abs(n - 1) < 1e-8);
+    Array.from(scalingMatrix).every((n) => Math.abs(n - 1) < THRESHOLD);
 
   if (MATRIX_TYPES.has(m._typename)) {
     const fRotation = m.fRotationMatrix ?? m.fRotation?.fRotationMatrix;
@@ -126,9 +127,9 @@ const areDimensionsEqual = (a: unknown, b: unknown): boolean => {
     const vA = (a as Record<string, unknown>)[key];
     const vB = (b as Record<string, unknown>)[key];
 
-    // If difference in value is less than 1e-8 then shapes are equal
+    // If difference in value is less than THRESHOLD then shapes are equal
     if (typeof vA === "number" && typeof vB === "number")
-      return Math.abs(vA - vB) < 1e-8;
+      return Math.abs(vA - vB) < THRESHOLD;
 
     // If property is not numeric then recurse function
     return areDimensionsEqual(vA, vB);
