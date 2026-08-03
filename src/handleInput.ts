@@ -1,12 +1,14 @@
 import {
   K_VIS_DAUGHTER,
   K_VIS_THIS,
+  MATRIX_TYPES,
   SPHERE_NSEG,
   SPHERE_NZ,
-  TGEO_COMPOSITE_SHAPE,
-  TGEO_SPHERE,
+  T_GEO_B_BOX_IDENTITY_FIELDS,
+  T_GEO_COMPOSITE_SHAPE,
+  T_GEO_SPHERE,
 } from "./lib/constants.js";
-import type { TGeoNodeMatrix } from "./lib/types/root.js";
+import type { TGeoNodeMatrix, TGeoVolume } from "./lib/types/root.js";
 
 // Filter out all volume subparts within the hidden paths and beyond a maximum level
 export const removeTrees = (
@@ -49,11 +51,11 @@ export const hideTree = (node: TGeoNodeMatrix): void => {
 
 // Avoid megabytes for near-flat shapes like Rich mirrors
 const reshapeSphere = (shape: any): void => {
-  if (shape._typename === TGEO_SPHERE) {
+  if (shape._typename === T_GEO_SPHERE) {
     // Reduce the number of faces in a sphere
     shape.fNseg = SPHERE_NSEG;
     shape.fNz = SPHERE_NZ;
-  } else if (shape._typename === TGEO_COMPOSITE_SHAPE) {
+  } else if (shape._typename === T_GEO_COMPOSITE_SHAPE) {
     // Recurse shape
     reshapeSphere(shape.fNode.fLeft);
     reshapeSphere(shape.fNode.fRight);
@@ -67,16 +69,95 @@ export const showNode = (node: TGeoNodeMatrix): void => {
   reshapeSphere(node.fVolume.fShape);
 };
 
+// Returns true for matrices that neither translates, rotates nor scales relative to their parent.
+const arePositionsEqual = (m: any): boolean => {
+  // Checks translation relative to the parent
+  const isNotTranslated = (translationMatrix?: ArrayLike<number>) =>
+    !translationMatrix ||
+    // Compute difference between translation matrix and 0s matrix
+    Array.from(translationMatrix).every((n) => Math.abs(n) < 1e-8);
+
+  // Checks rotation relative to the parent
+  const isNotRotated = (rotationMatrix?: ArrayLike<number>) =>
+    !rotationMatrix ||
+    // Compute difference between rotation matrix and identity matrix
+    [1, 0, 0, 0, 1, 0, 0, 0, 1].every(
+      (e, i) => Math.abs(Array.from(rotationMatrix)[i]! - e) < 1e-8,
+    );
+
+  // Checks scale relative to the parent
+  const isNotScaled = (scalingMatrix?: ArrayLike<number>) =>
+    !scalingMatrix ||
+    // Compute difference between scaling matrix and 1s matrix
+    Array.from(scalingMatrix).every((n) => Math.abs(n - 1) < 1e-8);
+
+  if (MATRIX_TYPES.has(m._typename)) {
+    const fRotation = m.fRotationMatrix ?? m.fRotation?.fRotationMatrix;
+
+    return (
+      isNotTranslated(m.fTranslation) &&
+      isNotRotated(fRotation) &&
+      isNotScaled(m.fScale)
+    );
+  }
+
+  return false;
+};
+
+// Returns true for shapes that have the same dimensions as their parents
+const areDimensionsEqual = (a: unknown, b: unknown): boolean => {
+  if (a === b) return true;
+
+  if (typeof a !== "object" || typeof b !== "object" || !a || !b) return false;
+
+  // Filters out identity fields and sorts the remaining ones for later comparison
+  const kA = Object.keys(a as Record<string, unknown>)
+    .filter((k) => !T_GEO_B_BOX_IDENTITY_FIELDS.has(k))
+    .sort();
+
+  const kB = Object.keys(b as Record<string, unknown>)
+    .filter((k) => !T_GEO_B_BOX_IDENTITY_FIELDS.has(k))
+    .sort();
+
+  // If amount or name of keys does not match then shapes are not equal
+  if (kA.length !== kB.length || kA.some((k, i) => k !== kB[i])) return false;
+
+  return kA.every((key) => {
+    const vA = (a as Record<string, unknown>)[key];
+    const vB = (b as Record<string, unknown>)[key];
+
+    // If difference in value is less than 1e-8 then shapes are equal
+    if (typeof vA === "number" && typeof vB === "number")
+      return Math.abs(vA - vB) < 1e-8;
+
+    // If property is not numeric then recurse function
+    return areDimensionsEqual(vA, vB);
+  });
+};
+
 // Makes given node and all its children visible
 const showTree = (node: TGeoNodeMatrix): void => {
-  const stack: TGeoNodeMatrix[] = [node];
+  const stack: { node: TGeoNodeMatrix; parent: TGeoVolume | null }[] = [
+    { node, parent: null },
+  ];
 
   while (stack.length) {
-    const current = stack.pop()!;
+    const { node: current, parent } = stack.pop()!;
+    const isRedundant =
+      parent !== null &&
+      arePositionsEqual(current.fMatrix) &&
+      areDimensionsEqual(parent.fShape, current.fVolume.fShape);
 
-    if (current.fVolume.fFillStyle !== 0) showNode(current);
+    if (!isRedundant && current.fVolume.fFillStyle !== 0) showNode(current);
 
-    if (current.fVolume.fNodes) stack.push(...current.fVolume.fNodes.arr);
+    if (current.fVolume.fNodes) {
+      stack.push(
+        ...current.fVolume.fNodes.arr.map((n) => ({
+          node: n,
+          parent: current.fVolume,
+        })),
+      );
+    }
   }
 };
 
