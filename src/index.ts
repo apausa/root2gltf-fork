@@ -67,9 +67,23 @@ const root2gltf = async ({
       showNode(rootNode); // Show volume
       findTrees(rootNode, new Set(values)); // Find and show all volume subparts within the target paths
       rootScene.name = key;
-      rootScene.children.push(build(rootGeo, BUILD_OPTIONS)); // Build from reassigned parameters
+      rootScene.children.push(
+        build(rootGeo, {
+          // vislevel: 4, // guardrail on the depth of the geometry hierarchy to traverse and render
+          // numnodes: 1000, // guardrail on the total number of visible nodes across the whole scene
+          numfaces: 1000, // (default 10000) guardrail on the total number of triangle faces across the whole scene
+          // dflt_colors: false, // avoids overriding predefined colors
+          // no_screen: false, // ignores kVisOnScreen visibility bits when set
+          // composite: false, // unfolds composite shapes into separate parts
+          // showtop: false, // renders the top/master volume (TGeoManager only)
+          // instancing: -1, // -1 disables InstancedMesh, 1 forces it, 0 lets jsroot decide
+          // frustum: null, // camera frustum used for LOD culling (irrelevant when rendering headless)
+          // material_kind: "lambert", // three.js material used for generated meshes
+          // set_names: true, // attaches volume names to generated meshes
+        }),
+      ); // Build from reassigned parameters
       rootScene.userData.visible = true;
-      rootScene.userData.opacity = ((length - i) * (max - min)) / length + min; // Dynamic transparency
+      // rootScene.userData.opacity = ((length - i) * (max - min)) / length + min; // Dynamic transparency
       normalizePivot(rootScene); // Normalize pivot to null before exporting for Three.js GLTFExporter
 
       console.log(
