@@ -40,6 +40,12 @@ Example with a config:
 node bin/cli.js -i CLD_o4_v05.root -c CLD_o4_v05.config.json -o CLD.gltf
 ```
 
+#### Allocate more memory if conversion fails
+
+```bash
+node --max-old-space-size=4096 bin/cli.js -i IDEA_o1_v03.root -c CLD_o4_v05.config.json -o IDEA.gltf
+```
+
 ### API
 
 You can also call the converter in code. File I/O is your responsibility — pass an already-opened ROOT file and an optional config object:
