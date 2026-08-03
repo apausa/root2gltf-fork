@@ -5,7 +5,7 @@ const generateConfig = (config: TConfig | null, childrenNodes: TObjArray) => {
   if (config !== null) return config;
 
   console.log(
-    `INFO: Exporting the full geometry at the default traversal depth 2. Use a config when you need to:
+    `INFO: Exporting the full geometry at the default traversal depth 4. Use a config when you need to:
     - Hide parts: exclude specific volumes from the output
     - Group volumes: combine multiple volumes into a single named view
     - Increase depth: traverse deeper into the geometry tree for detail`,
@@ -16,7 +16,7 @@ const generateConfig = (config: TConfig | null, childrenNodes: TObjArray) => {
     subparts: Object.fromEntries(
       childrenNodes.arr.map((node) => [node.fName, [node.fName]]),
     ),
-    depth: 2,
+    depth: 4,
   };
 };
 
