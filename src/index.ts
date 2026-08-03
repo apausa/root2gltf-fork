@@ -83,7 +83,7 @@ const root2gltf = async ({
         }),
       ); // Build from reassigned parameters
       rootScene.userData.visible = true;
-      // rootScene.userData.opacity = ((length - i) * (max - min)) / length + min; // Dynamic transparency
+      rootScene.userData.opacity = ((length - i) * (max - min)) / length + min; // Dynamic transparency
       normalizePivot(rootScene); // Normalize pivot to null before exporting for Three.js GLTFExporter
 
       console.log(
