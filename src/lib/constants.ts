@@ -30,5 +30,6 @@ export const SPHERE_NZ = 3;
 // jsroot build parameters
 export const GEO_GRAD_PER_SEGM = 360 / 30;
 
-// Minimum distance from the parent volume to be considered rudundant
-export const THRESHOLD = 1e-4;
+// Adustment constants
+export const THRESHOLD = 1e-4; // Minimum distance from the parent volume to be considered rudundant
+export const SHRINK_FACTOR = 0.999; // Scale applied to every dimension field of a shape so it renders slightly inside its identical parent.
