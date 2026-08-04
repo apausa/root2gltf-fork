@@ -1,3 +1,6 @@
+// Build constants
+export const DEPTH = 3;
+
 // Visibility flags
 export const K_VIS_THIS = 0x80;
 export const K_VIS_DAUGHTER = 0x8;
