@@ -2,6 +2,7 @@ import {
   K_VIS_DAUGHTER,
   K_VIS_THIS,
   MATRIX_TYPES,
+  SHRINK_FACTOR,
   SPHERE_NSEG,
   SPHERE_NZ,
   T_GEO_B_BOX_IDENTITY_FIELDS,
@@ -136,6 +137,30 @@ const areDimensionsEqual = (a: unknown, b: unknown): boolean => {
   });
 };
 
+// Scales down every dimension field of a shape so it renders slightly inside its identical parent.
+const shrinkShape = (shape: unknown): void => {
+  const stack: unknown[] = [shape];
+  const seen = new Set();
+
+  while (stack.length) {
+    const current = stack.pop();
+
+    if (!!current && typeof current === "object" && !seen.has(current)) {
+      seen.add(current);
+
+      Object.entries(current as Record<string, unknown>).forEach(
+        ([key, value]) => {
+          if (T_GEO_B_BOX_IDENTITY_FIELDS.has(key)) return;
+
+          if (typeof value === "number")
+            (current as Record<string, unknown>)[key] = value * SHRINK_FACTOR;
+          else stack.push(value);
+        },
+      );
+    }
+  }
+};
+
 // Makes given node and all its children visible
 const showTree = (node: TGeoNodeMatrix): void => {
   const stack: { node: TGeoNodeMatrix; parent: TGeoVolume | null }[] = [
@@ -144,12 +169,17 @@ const showTree = (node: TGeoNodeMatrix): void => {
 
   while (stack.length) {
     const { node: current, parent } = stack.pop()!;
-    const isRedundant =
+
+    if (
       parent !== null &&
       arePositionsEqual(current.fMatrix) &&
-      areDimensionsEqual(parent.fShape, current.fVolume.fShape);
+      areDimensionsEqual(parent.fShape, current.fVolume.fShape) &&
+      typeof current.fVolume.fShape === "object" &&
+      current.fVolume.fShape
+    )
+      shrinkShape(current.fVolume.fShape);
 
-    if (!isRedundant && current.fVolume.fFillStyle !== 0) showNode(current);
+    if (current.fVolume.fFillStyle !== 0) showNode(current);
 
     if (current.fVolume.fNodes) {
       stack.push(
