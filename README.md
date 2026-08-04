@@ -40,10 +40,13 @@ Example with a config:
 node bin/cli.js -i CLD_o4_v05.root -c CLD_o4_v05.config.json -o CLD.gltf
 ```
 
-#### Allocate more memory if conversion fails
+Examples without a config:
 
 ```bash
-node --max-old-space-size=4096 bin/cli.js -i IDEA_o1_v03.root -c CLD_o4_v05.config.json -o IDEA.gltf
+node bin/cli.js -i CLD_o4_v05.root -o CLD_o4_v05.gltf
+node bin/cli.js -i ALLEGRO_o2_v01.root -o ALLEGRO_o2_v01.gltf
+node --max-old-space-size=4096 bin/cli.js -i IDEA_o1_v03.root -o IDEA_o1_v03.gltf
+node bin/cli.js -i ILD_FCCee_v02.root -o ILD_FCCee_v02.gltf
 ```
 
 ### API
