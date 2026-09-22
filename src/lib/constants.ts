@@ -35,4 +35,11 @@ export const GEO_GRAD_PER_SEGM = 360 / 30;
 
 // Adustment constants
 export const THRESHOLD = 1e-4; // Minimum distance from the parent volume to be considered rudundant
-export const SHRINK_FACTOR = 0.999; // Scale applied to every dimension field of a shape so it renders slightly inside its identical parent.
+export const NUM_FACES = 1000; // Guardrail on the total number of triangle faces across the whole scene
+export const MAX_OPACITY = 1; // Maximum opacity limit
+export const MIN_OPACITY = 0.4; // Minimum opqcity limit
+export const SHRINK_FACTOR = 0.999; // Scale applied to every dimension field of a shape.
+/*
+ * Changing the shrinkage factor to 0.9999 instead of 0.999 brings
+ * back tesellation, check https://github.com/HEP-FCC/root2gltf/pull/15.
+ */

@@ -12,7 +12,12 @@ import {
 import mergeGLTF from "./concatenateOutput.js";
 
 // Constants
-import { GEO_GRAD_PER_SEGM } from "./lib/constants.js";
+import {
+  GEO_GRAD_PER_SEGM,
+  MAX_OPACITY,
+  MIN_OPACITY,
+  NUM_FACES,
+} from "./lib/constants.js";
 
 // Types
 import type { TParams } from "./lib/types/converter.js";
@@ -48,7 +53,6 @@ const root2gltf = async ({
 
     const { hidden, depth, subparts } = generateConfig(config, childrenNodes);
     const exporter = new GLTFExporter();
-    const [max, min] = [1, 0.4]; // Opacity limits
     const length = Object.keys(subparts).length - 1;
 
     let i = 0; // Current value to map
@@ -65,7 +69,7 @@ const root2gltf = async ({
       const sceneOptions = {
         // vislevel: 4, // guardrail on the depth of the geometry hierarchy to traverse and render
         // numnodes: 1000, // guardrail on the total number of visible nodes across the whole scene
-        numfaces: 1000, // (default 10000) guardrail on the total number of triangle faces across the whole scene
+        numfaces: NUM_FACES, // (default 10000) guardrail on the total number of triangle faces across the whole scene
         // dflt_colors: false, // avoids overriding predefined colors
         // no_screen: false, // ignores kVisOnScreen visibility bits when set
         // composite: false, // unfolds composite shapes into separate parts
@@ -82,8 +86,8 @@ const root2gltf = async ({
       rootScene.name = key;
       rootScene.children.push(build(rootGeo, sceneOptions)); // Build from reassigned parameters
       rootScene.userData.visible = true;
-      rootScene.userData.opacity = ((length - i) * (max - min)) / length + min; // Dynamic transparency
-
+      rootScene.userData.opacity =
+        ((length - i) * (MAX_OPACITY - MIN_OPACITY)) / length + MIN_OPACITY; // Dynamic transparency
       normalizePivot(rootScene); // Normalize pivot to null before exporting for Three.js GLTFExporter
 
       console.log(
