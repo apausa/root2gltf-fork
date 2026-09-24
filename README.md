@@ -43,10 +43,25 @@ node bin/cli.js -i CLD_o4_v05.root -c CLD_o4_v05.config.json -o CLD.gltf
 Examples without a config:
 
 ```bash
-node bin/cli.js -i CLD_o4_v05.root -o output_CLD.gltf
-node bin/cli.js -i ALLEGRO_o2_v01.root -o output_ALLEGRO.gltf
-node --max-old-space-size=4096 bin/cli.js -i IDEA_o1_v03.root -o output_IDEA.gltf
-node bin/cli.js -i ILD_FCCee_v02.root -o output_ILD.gltf
+# CLD
+node bin/cli.js -i CLD_o2_v08.root -o CLD_o2_v08.gltf
+node bin/cli.js -i CLD_o3_v01.root -o CLD_o3_v01.gltf
+node bin/cli.js -i CLD_o4_v05.root -o CLD_o4_v05.gltf
+
+# ALLEGRO
+node bin/cli.js -i ALLEGRO_o1_v01.root -o ALLEGRO_o1_v01.gltf
+node bin/cli.js -i ALLEGRO_o2_v01.root -o ALLEGRO_o2_v01.gltf
+
+# IDEA
+node bin/cli.js -i IDEA_o1_v04.root -o IDEA_o1_v04.gltf
+node bin/cli.js -i IDEA_o2_v01.root -o IDEA_o2_v01.gltf
+
+# ILD FCCee
+node bin/cli.js -i ILD_FCCee_v02.root -o ILD_FCCee_v02.gltf
+
+# FCChh
+node bin/cli.js -i FCChh_DectMaster.root -o FCChh_DectMaster.gltf
+
 ```
 
 ### API
